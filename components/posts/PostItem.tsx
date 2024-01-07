@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
-import { AiFillHeart, AiOutlineHeart, AiOutlineMessage } from 'react-icons/ai';
+import { AiFillHeart, AiOutlineHeart, AiOutlineMessage,AiOutlineDelete } from 'react-icons/ai';
 import { formatDistanceToNowStrict } from 'date-fns';
 
 import useLoginModal from '@/hooks/useLoginModal';
@@ -8,6 +8,9 @@ import useCurrentUser from '@/hooks/useCurrentUser';
 import useLike from '@/hooks/useLike';
 
 import Avatar from '../Avatar';
+import useDeletePost from '@/hooks/useDeleteHooks';
+import useDeleteHooks from '@/hooks/useDeleteHooks';
+
 interface PostItemProps {
   data: Record<string, any>;
   userId?: string;
@@ -17,6 +20,7 @@ const PostItem: React.FC<PostItemProps> = ({ data = {}, userId }) => {
   const router = useRouter();
   const loginModal = useLoginModal();
 
+  const deletePost = useDeleteHooks({ postId: data.id, userId});
   const { data: currentUser } = useCurrentUser();
   const { hasLiked, toggleLike } = useLike({ postId: data.id, userId});
 
@@ -48,6 +52,18 @@ const PostItem: React.FC<PostItemProps> = ({ data = {}, userId }) => {
 
     return formatDistanceToNowStrict(new Date(data.createdAt));
   }, [data.createdAt])
+
+  const handleDelete = async (event: React.MouseEvent) => {
+    // Olayın üst elemanlara yayılmasını engelle
+    event.stopPropagation();
+
+    // Silme işlemi onayı ve çağrısı
+    if (window.confirm('Bu gönderiyi silmek istediğinize emin misiniz?')) {
+      await deletePost();
+      // İsteğe bağlı: Gönderi listesini yenile veya kullanıcıyı başka bir sayfaya yönlendir
+    }
+  };
+
 
   return (
     <div
@@ -104,7 +120,7 @@ const PostItem: React.FC<PostItemProps> = ({ data = {}, userId }) => {
                 transition
                 hover:text-sky-500
             ">
-              <AiOutlineMessage size={20} />
+              <AiOutlineMessage size={20}  />
               <p>
                 {data.comments?.length || 0}
               </p>
@@ -126,6 +142,26 @@ const PostItem: React.FC<PostItemProps> = ({ data = {}, userId }) => {
                 {data.likedIds.length}
               </p>
             </div>
+            {currentUser?.id === data.user.id && (
+            <div
+            onClick={handleDelete}
+              className="
+                flex
+                flex-row
+                items-center
+                text-neutral-500
+                gap-2
+                cursor-pointer
+                transition
+                hover:text-red-500
+            ">
+          <AiOutlineDelete
+        size={20}
+        className="cursor-pointer text-red-500 hover:text-red-600"
+      />
+
+            </div>
+              )}
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ import CommentFeed from "@/components/posts/CommentFeed";
 import PostItem from "@/components/posts/PostItem";
 import usePost from "@/hooks/usePost";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { ClipLoader } from "react-spinners";
 
 const PostView = (props) => {
@@ -11,6 +12,24 @@ const PostView = (props) => {
     const {postId} = router.query;
 
     const {data:fetchedPost,isLoading} = usePost(postId as string);
+    useEffect(() => {
+        let timeoutId: number | undefined;
+
+        if (!isLoading && !fetchedPost) {
+
+          timeoutId = window.setTimeout(() => {
+            router.push('/');
+          }, 200);
+        }
+
+        return () => {
+
+          if (timeoutId !== undefined) {
+            clearTimeout(timeoutId);
+          }
+        };
+      }, [isLoading, fetchedPost, router]);
+
     if (isLoading || !fetchedPost) {
         return (
             <div className="flex justify-center items-center h-full">
