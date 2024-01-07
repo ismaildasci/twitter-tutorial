@@ -1,5 +1,23 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Live Preview of the Application
+
+[Twitter Tutorial Live Preview](https://comments.dasci.dev)
+
+## Environment Setup
+
+This project requires certain environment variables to be set for proper functioning. Create a `.env` file in the root of the project and add the following variables:
+
+```plaintext
+# Database Configuration
+DATABASE_URL=mongodb://yourMongoDBURLHere
+
+# Authentication
+NEXTAUTH_JWT_SECRET=yourJWTSecretHere
+NEXTAUTH_SECRET=yourNextAuthSecretHere
+
+```
+
 ## Getting Started
 
 First, run the development server:
